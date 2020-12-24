@@ -329,8 +329,10 @@ public class ConcurrentLinkedQueue<E> extends AbstractQueue<E>
 
         for (Node<E> t = tail, p = t;;) {
             Node<E> q = p.next;
+            // p 是尾结点，则执行插入
             if (q == null) {
                 // p is last node
+                // 设置尾结点的 next 节点
                 if (p.casNext(null, newNode)) {
                     // Successful CAS is the linearization point
                     // for e to become an element of this queue,

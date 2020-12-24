@@ -1336,7 +1336,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         if (workerCountOf(c) < corePoolSize) {
             if (addWorker(command, true))
                 return;
-            // 线程池状态可能由变化
+            // 线程池状态可能有变化
             c = ctl.get();
         }
         // 工作的线程大于核心线程数，或者新建线程失败

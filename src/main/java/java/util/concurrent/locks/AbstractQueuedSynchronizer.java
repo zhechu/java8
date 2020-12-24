@@ -1419,7 +1419,7 @@ public abstract class AbstractQueuedSynchronizer
     // acquireQueued 方法两个作用，1：阻塞当前节点，2：节点被唤醒时，使其能够获得锁
     // 如果以上步骤都失败了，打断线程
     public final void acquire(int arg) {
-        // tryAcquire方法是需要实现类去实现的，实现思路一般都是 cas 给 stats 赋值来决定是否能获得锁
+        // tryAcquire方法是需要实现类去实现的，实现思路一般都是 cas 给 state 赋值来决定是否能获得锁
         if (!tryAcquire(arg) &&
             // addWaiter 入参代表是排他模式
             acquireQueued(addWaiter(Node.EXCLUSIVE), arg))

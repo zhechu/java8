@@ -225,7 +225,7 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
                 else {
                     // 获取队头数据的过期时间
                     long delay = first.getDelay(NANOSECONDS);
-                    // 如果过期了，直接返回对头数据
+                    // 如果过期了，直接返回队头数据
                     if (delay <= 0)
                         return q.poll();
                     // 引用置为 null ，便于 gc
@@ -247,6 +247,7 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
                 }
             }
         } finally {
+            // 防止其他线程死睡不起，所以出队时需判断队列是否还有数据，若有则唤醒睡眠中的一个线程
             if (leader == null && q.peek() != null)
                 available.signal();
             lock.unlock();
