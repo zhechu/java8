@@ -259,6 +259,9 @@ public class ReentrantReadWriteLock
          * and the upper the shared (reader) hold count.
          */
 
+        /**
+         * 是因为无法用一次CAS同时操作两个int变量，所以用了一个int型的高16位和低16位分别表示读锁和写锁的状态
+         */
         static final int SHARED_SHIFT   = 16;
         static final int SHARED_UNIT    = (1 << SHARED_SHIFT);
         static final int MAX_COUNT      = (1 << SHARED_SHIFT) - 1;

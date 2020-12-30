@@ -56,6 +56,16 @@ import sun.misc.Unsafe;
  *
  * @since 1.6
  * @author Doug Lea
+ *
+ * 1.需要一个state变量，标记该锁的状态。state变量至少有两个值：0、1。对state变量的操作，要确保线程安全，也就是会用到CAS
+ * 2.需要记录当前是哪个线程持有锁
+ * 3.需要底层支持对一个线程进行阻塞或唤醒操作
+ * 4.需要有一个队列维护所有阻塞的线程。这个队列也必须是线程安全的无锁队列，也需要用到CAS
+ *
+ * 锁定状态
+ * 1.当state=0时，没有线程持有锁，exclusiveOwnerThread=null
+ * 2.当state=1时，有一个线程持有锁，exclusiveOwnerThread=该线程
+ * 3.当state>1时，说明该线程重入了该锁
  */
 public abstract class AbstractQueuedLongSynchronizer
     extends AbstractOwnableSynchronizer
@@ -1812,6 +1822,7 @@ public abstract class AbstractQueuedLongSynchronizer
         public final void await() throws InterruptedException {
             if (Thread.interrupted())
                 throw new InterruptedException();
+            // 已经先拿到了锁，不需再加锁以保证队列安全
             Node node = addConditionWaiter();
             long savedState = fullyRelease(node);
             int interruptMode = 0;

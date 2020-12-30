@@ -948,6 +948,10 @@ class Thread implements Runnable {
      *
      * @revised 6.0
      * @spec JSR-51
+     *
+     * 相当于给线程发送了一个唤醒的信号，所以如果线程此时恰好处于WAITING或者TIMED_WAITING状态，
+     * 就会抛出一个InterruptedException，并且线程被唤醒。而如果线程此时并没有被阻塞，则线程什么都不会做。
+     * 但在后续，线程可以判断自己是否收到过其他线程发来的中断信号
      */
     public void interrupt() {
         if (this != Thread.currentThread())
@@ -980,6 +984,8 @@ class Thread implements Runnable {
      *          <code>false</code> otherwise.
      * @see #isInterrupted()
      * @revised 6.0
+     *
+     * 读取中断状态，并重置中断标志位
      */
     public static boolean interrupted() {
         return currentThread().isInterrupted(true);
@@ -997,6 +1003,8 @@ class Thread implements Runnable {
      *          <code>false</code> otherwise.
      * @see     #interrupted()
      * @revised 6.0
+     *
+     * 读取中断状态
      */
     public boolean isInterrupted() {
         return isInterrupted(false);

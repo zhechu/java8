@@ -288,9 +288,13 @@ public class StampedLock implements java.io.Serializable {
 
     // Values for lock state and stamp operations
     private static final long RUNIT = 1L;
+    // 第 8 位表示写锁，写锁是不可重入
     private static final long WBIT  = 1L << LG_READERS;
+    // 最低 7 位表示读锁
     private static final long RBITS = WBIT - 1L;
+    // 读锁的数目
     private static final long RFULL = RBITS - 1L;
+    // 读锁和写锁状态合在一起
     private static final long ABITS = RBITS | WBIT;
     private static final long SBITS = ~RBITS; // note overlap with ABITS
 
@@ -507,6 +511,8 @@ public class StampedLock implements java.io.Serializable {
      * if exclusively locked.
      *
      * @return a stamp, or zero if exclusively locked
+     *
+     * 当state&WBIT！=0的时候，说明有线程持有写锁，上面的tryOptimisticRead会永远返回0
      */
     public long tryOptimisticRead() {
         long s;
@@ -524,6 +530,8 @@ public class StampedLock implements java.io.Serializable {
      * @param stamp a stamp
      * @return {@code true} if the lock has not been exclusively acquired
      * since issuance of the given stamp; else false
+     *
+     * validate（0）会永远返回false
      */
     public boolean validate(long stamp) {
         U.loadFence();
